@@ -36,43 +36,48 @@ class TTTBoard:
         self.odiag_container = 0
 
     def is_valid_move(self, cell):
-        if self.status == ClaimStatus.NONE:
-            return self.board[cell] == Players.NONE
-        else:
-            return False
+        return self.status == ClaimStatus.NONE and self.board[cell] == Players.NONE
 
-    def add_marker(self, Player, cell):
+    def add_marker(self, player, cell):
         # Assuming move is valid, add marker and update containers
-        self.board[cell] = Player
+        self.board[cell] = player
         self.row_container[cell // 3] += 1
         self.col_container[cell % 3] += 1
         if cell % 4 == 0:
             self.diag_container += 1
         if cell % 2 == 0 and cell % 8 != 0:
             self.odiag_container += 1
-        self.check_claimed_cell(cell)
+        return self.check_claimed(cell)
 
     def check_claimed_cell(self, cell):
         # Updates claimed status after move is made
+        board_claimed = False
         if self.row_container[cell // 3] == 3:
-            self.check_players([cell // 3, (cell // 3) + 1, (cell // 3) + 2])
-        if self.col_container[cell % 3] == 3:
-            self.check_players([cell % 3, (cell % 3) + 3, (cell % 3) + 3])
-        if self.diag_container == 3:
-            self.check_players([2, 4, 6])
-        if self.odiag_container == 3:
-            self.check_players([0, 4, 8])
+            if self.check_players([3 * (cell // 3), 3 * (cell // 3) + 1, 3 * (cell // 3) + 2]):
+                board_claimed = True
+        if not board_claimed and self.col_container[cell % 3] == 3:
+            if self.check_players([cell % 3, (cell % 3) + 3, (cell % 3) + 6]):
+                board_claimed = True
+        if not board_claimed and self.diag_container == 3:
+            if self.check_players([2, 4, 6]):
+                board_claimed = True
+        if not board_claimed and self.odiag_container == 3:
+            if self.check_players([0, 4, 8]):
+                board_claimed = True
+        return board_claimed
 
     def get_claim_status(self):
         return self.status
 
     def check_players(self, cells):
         # If the 3 cells given have the same Player, then status is updated to that Player's win
-        if self.status == ClaimStatus.NONE:  # Added in case multiple check_claimed ifs are triggered
-            for i in range(3):
-                if self.board[cells[i]] != self.board[cells[(i + 1) % 3]]:
-                    return
+        board_claimed = False
+        if self.status == ClaimStatus.NONE and \
+                self.board[cells[0]] == self.board[cells[1]] and \
+                self.board[cells[1]] == self.board[cells[2]]:
             self.status = self.board[cells[0]]
+            board_claimed = True
+        return board_claimed
 
     def get_cell_contents(self, cell: int) -> Players:
         return self.board[cell]
@@ -86,8 +91,8 @@ class UTTTBoard:
 
     def __init__(self):
         # Initiate Blank Board
-        self.board = []
-        [self.board.append(TTTBoard()) for _ in range(9)]
+        self.board = [TTTBoard() for _ in range(9)]
+        self.status_board = TTTBoard()
         self.observers = []
         self.game_status = GameStatus.NOT_OVER
 
@@ -102,12 +107,18 @@ class UTTTBoard:
 
     def make_move(self, square, cell, player):
         # Add marker to the board
+        game_win = False
         if self.is_valid_move(square, cell):
-            self.board[square].board[cell] = player
-            self.notify_observers(None)
-            #TODO: Update game_status
+            if self.board[square].add_marker(player, cell):
+                if self.status_board.add_marker(player, square):
+                    if player == Players.X:
+                        self.game_status = GameStatus.X_WIN
+                    else:
+                        self.game_status = GameStatus.O_WIN
+                    game_win = True
         else:
             self.notify_observers("Invalid Move.")
+        return game_win
 
     def is_valid_move(self, square, cell):
         if square < 0 or square > 8 or cell < 0 or cell > 8:
@@ -121,7 +132,7 @@ class UTTTBoard:
     def __str__(self):
         ret = ""
         squares = \
-        np.array([[[[i] * 3 for i in range(k, k + 3)] for _ in range(3)] for k in [0, 3, 6]]).reshape([1, 81])[0]
+            np.array([[[[i] * 3 for i in range(k, k + 3)] for _ in range(3)] for k in [0, 3, 6]]).reshape([1, 81])[0]
         cells = np.array([[0, 1, 2] * 3, [3, 4, 5] * 3, [6, 7, 8] * 3] * 3).flatten()
         for i in range(81):
             if i % 27 == 0 and i != 0: ret += "\n================================"
