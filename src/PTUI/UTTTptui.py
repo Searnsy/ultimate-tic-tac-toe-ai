@@ -1,8 +1,5 @@
-import sys
-# insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, '/Users/keege/OneDrive/Documents/GitHub/ultimate-tic-tac-toe-ai/src/model/') # TODO: How to grab locally???
-from Observer import *
-from UTTTBoard import *
+from src.model.Observer import *
+from src.model.UTTTBoard import *
 
 class UTTTptui(Observer):
     def __init__(self):
@@ -42,7 +39,7 @@ class UTTTptui(Observer):
             else:
                 self.curr_player = Players.X
 
-        update(self.model, None)
+        Observer.update(self.model, None)
 
 
 
