@@ -1,5 +1,5 @@
 
-import UTTT_Board
+import UTTTBoard
 class Observer:
-    def update(self, Subject: UTTT_Board, Client_Data: str) -> None:
+    def update(self, Subject: UTTTBoard, Client_Data: str) -> None:
         pass
