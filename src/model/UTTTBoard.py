@@ -109,11 +109,12 @@ class UTTTBoard:
         return self.board[square].board[cell]
 
     def __str__(self):
+        ret = ""
         squares = np.array([[[[i]*3 for i in range(k,k+3)] for _ in range(3)] for k in[0,3,6]]).reshape([1,81])[0]
         cells = np.array([[0,1,2]*3,[3,4,5]*3,[6,7,8]*3]*3).flatten()
         for i in range(81):
-            if i % 27 == 0 and i!=0: print("\n================================",end='')
-            if i % 9 == 0: print()
-            if i % 3 ==0 and i%9 !=0: print("|| ",end='')
-            print(self.get_content(squares[i], cells[i]).value, ' ', end='')
-
+            if i % 27 == 0 and i!=0: ret += "\n================================"
+            if i % 9 == 0: ret += "\n"
+            if i % 3 ==0 and i%9 !=0: ret += "|| "
+            ret += self.get_content(squares[i], cells[i]).value + '  '
+        return ret
