@@ -47,7 +47,7 @@ class TTTBoard:
             self.diag_container += 1
         if cell % 2 == 0 and cell % 8 != 0:
             self.odiag_container += 1
-        return self.check_claimed(cell)
+        return self.check_claimed_cell(cell)
 
     def check_claimed_cell(self, cell):
         # Updates claimed status after move is made
@@ -116,6 +116,7 @@ class UTTTBoard:
                     else:
                         self.game_status = GameStatus.O_WIN
                     game_win = True
+            self.notify_observers(None)
         else:
             self.notify_observers("Invalid Move.")
         return game_win
