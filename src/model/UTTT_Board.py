@@ -4,9 +4,9 @@ from enum import Enum
 
 
 class Players(Enum):
-    NONE=0
-    X=1
-    O=2
+    NONE='_'
+    X='X'
+    O='O'
 
 class Game_Status(Enum):
     NOT_OVER=0
@@ -108,4 +108,16 @@ class UTTT_Board:
             return False
         else:
             return self.board[square].Is_Valid_Move(cell)
+
+    def Get_Content(self,square, cell):
+        return self.board[square].board[cell]
+
+    def To_String(self):
+        squares = np.array([[[[i]*3 for i in range(k,k+3)] for j in range(3)] for k in[0,3,6]]).reshape([1,81])[0]
+        cells = np.array([[0,1,2]*3,[3,4,5]*3,[6,7,8]*3]*3).flatten()
+        for i in range(81):
+            if i % 27 == 0 and i!=0: print("\n================================",end='')
+            if i % 9 == 0: print()
+            if i % 3 ==0 and i%9 !=0: print("|| ",end='')
+            print(self.Get_Content(squares[i],cells[i]).value,' ', end='')
 
