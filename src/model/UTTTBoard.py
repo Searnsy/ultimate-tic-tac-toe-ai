@@ -50,9 +50,9 @@ class TTTBoard:
             self.diag_container += 1
         if cell % 2 == 0 and cell % 8 != 0:
             self.odiag_container += 1
-        self.check_claimed(cell)
+        self.check_claimed_cell(cell)
 
-    def check_claimed(self, cell):
+    def check_claimed_cell(self, cell):
         # Updates claimed status after move is made
         if self.row_container[cell // 3] == 3:
             self.check_players([cell // 3, (cell // 3) + 1, (cell // 3) + 2])
@@ -62,6 +62,9 @@ class TTTBoard:
             self.check_players([2, 4, 6])
         if self.odiag_container == 3:
             self.check_players([0, 4, 8])
+
+    def get_claim_status(self):
+        return self.status
 
     def check_players(self, cells):
         # If the 3 cells given have the same Player, then status is updated to that Player's win
@@ -101,11 +104,13 @@ class UTTTBoard:
         # Add marker to the board
         if self.is_valid_move(square, cell):
             self.board[square].board[cell] = player
+            self.notify_observers(None)
+            #TODO: Update game_status
         else:
             self.notify_observers("Invalid Move.")
 
     def is_valid_move(self, square, cell):
-        if square < 0 or square > 8 or cell < 0 or cell > 9:
+        if square < 0 or square > 8 or cell < 0 or cell > 8:
             return False
         else:
             return self.board[square].is_valid_move(cell)
