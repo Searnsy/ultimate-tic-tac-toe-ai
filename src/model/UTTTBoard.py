@@ -75,7 +75,10 @@ class TTTBoard:
         if self.status == ClaimStatus.NONE and \
                 self.board[cells[0]] == self.board[cells[1]] and \
                 self.board[cells[1]] == self.board[cells[2]]:
-            self.status = self.board[cells[0]]
+            if self.board[cells[0]] == Players.X:
+                self.status = ClaimStatus.X_CLAIM
+            else:
+                self.status = ClaimStatus.O_CLAIM
             board_claimed = True
         return board_claimed
 
