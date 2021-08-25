@@ -59,10 +59,10 @@ class TTTBoard:
             if self.check_players([cell % 3, (cell % 3) + 3, (cell % 3) + 6]):
                 board_claimed = True
         if not board_claimed and self.diag_container == 3:
-            if self.check_players([2, 4, 6]):
+            if self.check_players([0, 4, 8]):
                 board_claimed = True
         if not board_claimed and self.odiag_container == 3:
-            if self.check_players([0, 4, 8]):
+            if self.check_players([2, 4, 6]):
                 board_claimed = True
         return board_claimed
 
