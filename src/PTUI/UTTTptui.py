@@ -18,6 +18,7 @@ class UTTTptui(Observer):
         print("Status: " + self.model.game_status.name)
         self.message = client_data
 
+    """ ********* Controller Section ********* """
     def run(self):
         print("Welcome to Ultimate Tic Tac Toe!")
         self.update(self.model, None)
