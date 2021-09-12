@@ -98,6 +98,7 @@ class UTTTBoard:
         self.status_board = TTTBoard()
         self.observers = []
         self.game_status = GameStatus.NOT_OVER
+        self.next_square = -1
 
     def add_observer(self, observer):
         # Add observers to list
@@ -119,13 +120,18 @@ class UTTTBoard:
                     else:
                         self.game_status = GameStatus.O_WIN
                     game_win = True
+                self.next_square = -1
+            else:
+                self.next_square = square
             self.notify_observers(None)
         else:
             self.notify_observers("Invalid Move.")
         return game_win
 
     def is_valid_move(self, square, cell):
-        if square < 0 or square > 8 or cell < 0 or cell > 8:
+        if 0 < square < 8 or cell < 0 or cell > 8:
+            return False
+        elif self.next_square != -1 and square != self.next_square:
             return False
         else:
             return self.board[square].is_valid_move(cell)
