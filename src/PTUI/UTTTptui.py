@@ -13,7 +13,7 @@ class UTTTptui(Observer):
     def initialize_view(self):
         self.model.add_observer(self)
 
-    def update(self, subject: UTTTBoard, client_data: str) -> None:
+    def update(self, subject, client_data):
         print(self.model)
         print("Status: " + self.model.game_status.name)
         self.message = client_data
