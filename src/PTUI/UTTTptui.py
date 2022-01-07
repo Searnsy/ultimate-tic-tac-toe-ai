@@ -41,6 +41,9 @@ class UTTTptui(Observer):
         self.update(self.model, None)
 
     def SelectInput(self):
+        """
+            Allows the user to select the input style for each player
+        """
         select_str = "1 - Human\n2 - Random\n"
         print("Please select input option for Player X:")
         self.playerInputs.append(int(input(select_str)))
