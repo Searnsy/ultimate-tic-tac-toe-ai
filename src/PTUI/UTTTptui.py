@@ -9,6 +9,7 @@ class UTTTptui(Observer):
         self.message = ""
         self.curr_player = Players.X
         self.initialize_view()
+        self.playerInputs = []
 
     """ ********* View Section ********* """
     def initialize_view(self):
@@ -22,12 +23,15 @@ class UTTTptui(Observer):
     """ ********* Controller Section ********* """
     def run(self):
         print("Welcome to Ultimate Tic Tac Toe!")
+        self.SelectInput()
+        switch = {
+            1: 'HumanInput',
+            2: 'RandomInput'
+        }
         self.update(self.model, None)
         while self.model.game_status == GameStatus.NOT_OVER:
-            if self.curr_player == Players.X:
-                self.HumanInput()
-            else:
-                self.RandomInput()
+            # Calls Input Type for Current Player
+            getattr(self, switch[self.playerInputs[self.curr_player==Players.O]])()
             # Switch Player
             if self.curr_player == Players.X:
                 self.curr_player = Players.O
@@ -35,6 +39,13 @@ class UTTTptui(Observer):
                 self.curr_player = Players.X
 
         self.update(self.model, None)
+
+    def SelectInput(self):
+        select_str = "1 - Human\n2 - Random\n"
+        print("Please select input option for Player X:")
+        self.playerInputs.append(int(input(select_str)))
+        print("Please select input option for Player O:")
+        self.playerInputs.append(int(input(select_str)))
 
     def HumanInput(self):
         """
