@@ -1,5 +1,6 @@
 from src.model.Observer import *
 from src.model.UTTTBoard import *
+import random
 
 class UTTTptui(Observer):
     def __init__(self):
@@ -26,7 +27,7 @@ class UTTTptui(Observer):
             if self.curr_player == Players.X:
                 self.HumanInput()
             else:
-                self.HumanInput()
+                self.RandomInput()
             # Switch Player
             if self.curr_player == Players.X:
                 self.curr_player = Players.O
@@ -53,6 +54,29 @@ class UTTTptui(Observer):
                 print(self.message)
         self.square = cell
 
+    def RandomInput(self):
+        """
+        AI randomly selects available move
+        """
+        while True:
+            if 0 <= self.square < 9 and self.model.board[self.square].get_claim_status() is ClaimStatus.NONE:
+                pass
+            else:
+                #Select Square to place marker
+                squares=[]
+                [ squares.append(x) for x in range(0,9) if self.model.board[x].get_claim_status()==ClaimStatus.NONE]
+                self.square = random.choice(squares)
+            #Select Cell to place marker
+            cells =[]
+            [ cells.append(x) for x in range(0,9) if self.model.board[self.square].board[x]==Players.NONE ]
+            cell=random.choice(cells)
+            print("Player {} placed their marker in square {} and cell {}\n".format(self.curr_player.value, self.square, cell))
+            self.model.make_move(self.square, cell, self.curr_player)
+            if self.message != "Invalid Move.":
+                break
+            else:
+                print(self.message)
+        self.square = cell
 
 if __name__ == '__main__':
     ptui = UTTTptui()
